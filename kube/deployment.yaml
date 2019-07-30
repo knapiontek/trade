@@ -1,0 +1,68 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  annotations:
+    deployment.kubernetes.io/revision: "1"
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"apps/v1","kind":"Deployment","metadata":{"annotations":{},"name":"mytraefik","namespace":"default"},"spec":{"replicas":1,"selector":{"matchLabels":{"run":"mytraefik"}},"template":{"metadata":{"labels":{"run":"mytraefik"}},"spec":{"containers":[{"image":"knapiontek/traefik:latest","name":"mytraefik","ports":[{"containerPort":80,"protocol":"TCP"},{"containerPort":443,"protocol":"TCP"}]}]}}}}
+  creationTimestamp: "2019-07-29T16:05:40Z"
+  generation: 11
+  name: mytraefik
+  namespace: default
+  resourceVersion: "1301754"
+  selfLink: /apis/extensions/v1beta1/namespaces/default/deployments/mytraefik
+  uid: b5ffcd45-b21a-11e9-9684-42010a840035
+spec:
+  progressDeadlineSeconds: 600
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      run: mytraefik
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        run: mytraefik
+    spec:
+      containers:
+      - image: knapiontek/traefik:latest
+        imagePullPolicy: Always
+        name: mytraefik
+        ports:
+        - containerPort: 80
+          protocol: TCP
+        - containerPort: 443
+          protocol: TCP
+        resources: {}
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 30
+status:
+  availableReplicas: 1
+  conditions:
+  - lastTransitionTime: "2019-07-29T16:05:40Z"
+    lastUpdateTime: "2019-07-29T16:05:43Z"
+    message: ReplicaSet "mytraefik-f96c9966b" has successfully progressed.
+    reason: NewReplicaSetAvailable
+    status: "True"
+    type: Progressing
+  - lastTransitionTime: "2019-07-29T16:53:48Z"
+    lastUpdateTime: "2019-07-29T16:53:48Z"
+    message: Deployment has minimum availability.
+    reason: MinimumReplicasAvailable
+    status: "True"
+    type: Available
+  observedGeneration: 11
+  readyReplicas: 1
+  replicas: 1
+  updatedReplicas: 1

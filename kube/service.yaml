@@ -1,0 +1,31 @@
+apiVersion: v1
+kind: Service
+metadata:
+  creationTimestamp: "2019-07-29T16:17:36Z"
+  name: mytraefik
+  namespace: default
+  resourceVersion: "1297384"
+  selfLink: /api/v1/namespaces/default/services/mytraefik
+  uid: 60e6745d-b21c-11e9-9684-42010a840035
+spec:
+  clusterIP: 10.0.14.221
+  externalTrafficPolicy: Cluster
+  ports:
+  - name: http
+    nodePort: 32710
+    port: 80
+    protocol: TCP
+    targetPort: 80
+  - name: https
+    nodePort: 32711
+    port: 443
+    protocol: TCP
+    targetPort: 443
+  selector:
+    run: mytraefik
+  sessionAffinity: None
+  type: LoadBalancer
+status:
+  loadBalancer:
+    ingress:
+    - ip: 34.77.106.229
