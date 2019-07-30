@@ -10,6 +10,15 @@ logLevel = "INFO"
   address = ":443"
     [entryPoints.https.tls]
 
+[frontends]
+  [frontends.frontend1]
+  backend = "backend1"
+
+[backends]
+  [backends.backend1]
+    [backends.backend1.servers.server1]
+    url = "http://10.0.12.38:80"
+
 [acme]
 email = "knapiontek@gmail.com"
 storage = "acme.json"
