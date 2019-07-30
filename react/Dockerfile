@@ -1,7 +1,11 @@
 FROM node:12.7-alpine
 
 COPY . /trade
-CD /trade
+WORKDIR /trade
 
-yarn install
+RUN yarn install
 
+EXPOSE 3000
+
+ENTRYPOINT ["yarn"]
+CMD ["start"]
