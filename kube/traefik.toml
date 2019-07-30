@@ -13,7 +13,7 @@ logLevel = "DEBUG"
 [backends]
   [backends.backend1]
     [backends.backend1.servers.server1]
-    url = "http://10.0.12.38:80"
+    url = "http://34.76.78.240:80"
 
 [frontends]
   [frontends.frontend1]
@@ -28,7 +28,7 @@ entryPoint = "https"
   [acme.httpChallenge]
   entryPoint = "http"
   [[acme.domains]]
-  main = "dev.knapiontek.com"
+  main = "gecko.knapiontek.com"
 
 [api]
   entryPoint = "traefik"
