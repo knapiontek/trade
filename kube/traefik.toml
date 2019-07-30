@@ -1,5 +1,5 @@
 defaultEntryPoints = ["http", "https"]
-logLevel = "INFO"
+logLevel = "DEBUG"
 
 [entryPoints]
   [entryPoints.http]
@@ -10,14 +10,15 @@ logLevel = "INFO"
   address = ":443"
     [entryPoints.https.tls]
 
-[frontends]
-  [frontends.frontend1]
-  backend = "backend1"
-
 [backends]
   [backends.backend1]
     [backends.backend1.servers.server1]
     url = "http://10.0.12.38:80"
+
+[frontends]
+  [frontends.frontend1]
+  backend = "backend1"
+  passHostHeader = true
 
 [acme]
 email = "knapiontek@gmail.com"
@@ -26,6 +27,10 @@ onHostRule = true
 entryPoint = "https"
   [acme.httpChallenge]
   entryPoint = "http"
-
-[[acme.domains]]
+  [[acme.domains]]
   main = "dev.knapiontek.com"
+
+[api]
+  entryPoint = "traefik"
+  dashboard = true
+  debug = true
