@@ -1,2 +1,2 @@
 FROM traefik:alpine
-COPY ./traefik.toml /etc/traefik
+COPY ./traefik_local.toml /etc/traefik
