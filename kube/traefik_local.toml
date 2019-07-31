@@ -5,14 +5,21 @@ defaultEntryPoints = ["http"]
 [entryPoints]
   [entryPoints.http]
   address = ":80"
+  [entryPoints.dashboard]
+  address = ":8080"
 
-[frontends]
-  [frontends.frontend_trade]
-  backend = "backend_trade"
-    [frontends.frontend_trade.routes.test_1]
-    rule = "Host:gecko-code.com"
-    
-[backends]
-  [backends.backend_trade]
-    [backends.backend_trade.servers.server1]
-    url = "http://34.76.78.240:80"
+[api]
+entrypoint = "dashboard"
+dashboard = true
+debug = true
+
+[file]
+  [frontends]
+    [frontends.frontend_trade]
+    backend = "backend_trade"
+      [frontends.frontend_trade.routes.route_trade]
+      rule = "Host:gecko-code.com"
+  [backends]
+    [backends.backend_trade]
+      [backends.backend_trade.servers.server_trade]
+      url = "http://34.76.78.240:80"

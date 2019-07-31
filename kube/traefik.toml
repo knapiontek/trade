@@ -1,5 +1,6 @@
-defaultEntryPoints = ["http", "https"]
+debug = true
 logLevel = "DEBUG"
+defaultEntryPoints = ["http", "https"]
 
 [entryPoints]
   [entryPoints.http]
@@ -9,16 +10,16 @@ logLevel = "DEBUG"
   [entryPoints.https]
   address = ":443"
     [entryPoints.https.tls]
+  [entryPoints.dashboard]
+  address = ":8080"
+  [entryPoints.dashboard.auth]
+    [entryPoints.dashboard.auth.basic]
+    users = ["admin:$apr1$cL0yrrQm$wskynvO5mZl3.BqBIzyYs1"]
 
-[backends]
-  [backends.backend1]
-    [backends.backend1.servers.server1]
-    url = "http://34.76.78.240:80"
-
-[frontends]
-  [frontends.frontend1]
-  backend = "backend1"
-  passHostHeader = true
+[api]
+entrypoint = "dashboard"
+dashboard = true
+debug = true
 
 [acme]
 email = "knapiontek@gmail.com"
@@ -30,7 +31,13 @@ entryPoint = "https"
   [[acme.domains]]
   main = "gecko.knapiontek.com"
 
-[api]
-  entryPoint = "traefik"
-  dashboard = true
-  debug = true
+[file]
+  [frontends]
+    [frontends.frontend_trade]
+    backend = "backend_trade"
+      [frontends.frontend_trade.routes.route_trade]
+      rule = "Host:gecko.knapiontek.com"
+  [backends]
+    [backends.backend_trade]
+      [backends.backend_trade.servers.server_trade]
+      url = "http://34.76.78.240:80"

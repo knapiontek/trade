@@ -10,4 +10,5 @@ kubectl expose deployment mytraefik --port=80 --type=LoadBalancer
 kubectl scale deployment mytraefik --replicas=0
 kubectl get pods
 curl https://dev.knapiontek.com/
+sudo apt-get install dnsmasq
 ```
