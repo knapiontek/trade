@@ -1,0 +1,18 @@
+debug = true
+logLevel = "DEBUG"
+defaultEntryPoints = ["http"]
+
+[entryPoints]
+  [entryPoints.http]
+  address = ":80"
+
+[frontends]
+  [frontends.frontend_trade]
+  backend = "backend_trade"
+    [frontends.frontend_trade.routes.test_1]
+    rule = "Host:gecko-code.com"
+    
+[backends]
+  [backends.backend_trade]
+    [backends.backend_trade.servers.server1]
+    url = "http://34.76.78.240:80"
