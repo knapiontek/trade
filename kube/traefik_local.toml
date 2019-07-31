@@ -4,30 +4,30 @@ defaultEntryPoints = ["http"]
 
 [entryPoints]
   [entryPoints.http]
-  address = ":80"
+    address = ":80"
   [entryPoints.dashboard]
-  address = ":8080"
+    address = ":8080"
 
 [api]
-entrypoint = "dashboard"
-dashboard = true
-debug = true
+  entrypoint = "dashboard"
+  dashboard = true
+  debug = true
 
 [file]
   [frontends]
     [frontends.frontend_trade]
-    backend = "backend_trade"
+      backend = "backend_trade"
       [frontends.frontend_trade.routes.route_trade]
-      rule = "Host:gecko-code.com"
+        rule = "Host:gecko-code.com"
     [frontends.frontend_admin]
-    entrypoints = ["dashboard"]
-    backend = "backend_admin"
+      entrypoints = ["dashboard"]
+      backend = "backend_admin"
       [frontends.frontend_admin.routes.route_admin]
-      rule = "Host:admin-code.com"
+        rule = "Host:admin-code.com"
   [backends]
     [backends.backend_trade]
       [backends.backend_trade.servers.server_trade]
-      url = "http://34.76.78.240:80"
+        url = "http://34.76.78.240:80"
     [backends.backend_admin]
       [backends.backend_admin.servers.server_admin]
-      url = "http://127.0.0.1:8080"
+        url = "http://127.0.0.1:8080"
