@@ -21,6 +21,25 @@ entrypoint = "dashboard"
 dashboard = true
 debug = true
 
+[file]
+  [frontends]
+    [frontends.frontend_trade]
+    backend = "backend_trade"
+      [frontends.frontend_trade.routes.route_trade]
+      rule = "Host:trade.gecko.knapiontek.com"
+    [frontends.frontend_admin]
+    entrypoints = ["dashboard"]
+    backend = "backend_admin"
+      [frontends.frontend_admin.routes.route_admin]
+      rule = "Host:admin.gecko.knapiontek.com"
+  [backends]
+    [backends.backend_trade]
+      [backends.backend_trade.servers.server_trade]
+      url = "http://34.76.78.240:80"
+    [backends.backend_admin]
+      [backends.backend_admin.servers.server_admin]
+      url = "http://127.0.0.1:8080"
+
 [acme]
 email = "knapiontek@gmail.com"
 storage = "acme.json"
@@ -30,14 +49,4 @@ entryPoint = "https"
   entryPoint = "http"
   [[acme.domains]]
   main = "gecko.knapiontek.com"
-
-[file]
-  [frontends]
-    [frontends.frontend_trade]
-    backend = "backend_trade"
-      [frontends.frontend_trade.routes.route_trade]
-      rule = "Host:gecko.knapiontek.com"
-  [backends]
-    [backends.backend_trade]
-      [backends.backend_trade.servers.server_trade]
-      url = "http://34.76.78.240:80"
+  sans = ["trade.gecko.knapiontek.com", "admin.gecko.knapiontek.com"]
