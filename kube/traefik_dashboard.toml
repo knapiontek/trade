@@ -1,0 +1,52 @@
+debug = true
+logLevel = "DEBUG"
+
+[entryPoints]
+  [entryPoints.http]
+  address = ":80"
+    [entryPoints.http.redirect]
+    entryPoint = "https"
+  [entryPoints.https]
+  address = ":443"
+    [entryPoints.https.tls]
+  [entryPoints.traefik]
+  address = "127.0.0.1:1337"
+
+[api]
+entrypoint="traefik"
+dashboard = true
+  [api.statistics]
+  recentErrors = 20
+
+[acme]
+email = "knapiontek@gmail.com"
+storage = "acme.json"
+entryPoint = "https"
+onHostRule = true
+onDemand = false
+  [acme.httpChallenge]
+  entryPoint = "http"
+  [[acme.domains]]
+    main = "monitor.knapiontek.com"
+
+[file]
+
+[backends]
+  [backends.traefik]
+    [backends.traefik.servers]
+      [backends.traefik.servers.backend1]
+      url = "http://127.0.0.1:1337"
+      [backends.traefik.healthCheck]
+        path = "/"
+        interval = "10s"
+        scheme = "http"
+
+[frontends]
+  [frontends.traefik]
+    entryPoints = ["http", "https"]
+    backend = "traefik"
+    passHostHeader = true
+    [frontends.traefik.routes]
+      [frontends.traefik.routes.main]
+      rule = "Host:monitor.knapiontek.com"
+
