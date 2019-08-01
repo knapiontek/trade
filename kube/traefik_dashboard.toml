@@ -16,7 +16,7 @@ logLevel = "INFO"
         users = ["admin:$apr1$cL0yrrQm$wskynvO5mZl3.BqBIzyYs1"]
 
 [api]
-  entrypoint="admin"
+  entryPoint = "admin"
   dashboard = true
   [api.statistics]
     recentErrors = 20
