@@ -1,64 +1,63 @@
-debug = true
-logLevel = "DEBUG"
+debug = false
+logLevel = "INFO"
 
 [entryPoints]
   [entryPoints.http]
-  address = ":80"
+    address = ":80"
     [entryPoints.http.redirect]
-    entryPoint = "https"
+      entryPoint = "https"
   [entryPoints.https]
-  address = ":443"
+    address = ":443"
     [entryPoints.https.tls]
-  [entryPoints.traefik]
-  address = "127.0.0.1:1337"
+  [entryPoints.admin]
+    address = "127.0.0.1:1337"
+    [entryPoints.admin.auth]
+      [entryPoints.admin.auth.basic]
+        users = ["admin:$apr1$cL0yrrQm$wskynvO5mZl3.BqBIzyYs1"]
 
 [api]
-entrypoint="traefik"
-dashboard = true
+  entrypoint="admin"
+  dashboard = true
   [api.statistics]
-  recentErrors = 20
+    recentErrors = 20
 
 [acme]
-email = "knapiontek@gmail.com"
-storage = "acme.json"
-entryPoint = "https"
-onHostRule = true
-onDemand = false
+  email = "knapiontek@gmail.com"
+  storage = "acme.json"
+  entryPoint = "https"
+  onHostRule = true
+  onDemand = false
   [acme.httpChallenge]
-  entryPoint = "http"
+    entryPoint = "http"
   [[acme.domains]]
-    main = "gecko.knapiontek.com"
-    sans = ["trade.gecko.knapiontek.com", "traefik.gecko.knapiontek.com"]
+    main = "knapiontek.com"
+    sans = ["trade.knapiontek.com", "admin.knapiontek.com"]
 
 [file]
 
 [backends]
-  [backends.traefik]
-    [backends.traefik.servers]
-      [backends.traefik.servers.main]
-      url = "http://127.0.0.1:1337"
-      [backends.traefik.healthCheck]
-      path = "/"
-      interval = "10s"
-      scheme = "http"
+  [backends.admin]
+    [backends.admin.servers]
+      [backends.admin.servers.main]
+        url = "http://127.0.0.1:1337"
   [backends.trade]
     [backends.trade.servers]
       [backends.trade.servers.main]
-      url = "http://34.76.78.240:80"
+        url = "http://34.76.78.240:80"
 
 [frontends]
-  [frontends.traefik]
+  [frontends.admin]
     entryPoints = ["http", "https"]
-    backend = "traefik"
+    backend = "admin"
     passHostHeader = true
-    [frontends.traefik.routes]
-      [frontends.traefik.routes.main]
-      rule = "Host:traefik.gecko.knapiontek.com"
+    [frontends.admin.routes]
+      [frontends.admin.routes.main]
+        rule = "Host:admin.knapiontek.com"
   [frontends.trade]
     entryPoints = ["http", "https"]
     backend = "trade"
     passHostHeader = true
     [frontends.trade.routes]
       [frontends.trade.routes.main]
-        rule = "Host:trade.gecko.knapiontek.com"
+        rule = "Host:trade.knapiontek.com"
 
