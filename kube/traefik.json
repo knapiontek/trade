@@ -1,0 +1,32 @@
+{
+  "backends": {
+    "trade": {
+      "servers": {
+        "main": {
+          "url": "http://34.76.78.240:80",
+          "weight": 0
+        }
+      },
+      "loadBalancer": {
+        "method": "wrr"
+      }
+    }
+  },
+  "frontends": {
+    "trade": {
+      "entryPoints": [
+        "http",
+        "https"
+      ],
+      "backend": "trade",
+      "routes": {
+        "main": {
+          "rule": "Host:trade.knapiontek.com"
+        }
+      },
+      "passHostHeader": true,
+      "priority": 0,
+      "basicAuth": null
+    }
+  }
+}

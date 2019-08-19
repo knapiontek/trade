@@ -12,3 +12,11 @@ kubectl get pods
 curl https://dev.knapiontek.com/
 sudo apt-get install dnsmasq
 ```
+
+```bash
+docker build . -t knapiontek/traefik:v3
+docker push knapiontek/traefik:v3
+
+curl -u admin:skynet0iscoming -XGET https://admin.knapiontek.com/api/providers/rest | jq . > traefik.json
+curl -u admin:skynet0iscoming -XPUT -d @traefik.json https://admin.knapiontek.com/api/providers/rest
+```
