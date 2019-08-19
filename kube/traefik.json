@@ -3,7 +3,7 @@
     "trade": {
       "servers": {
         "main": {
-          "url": "http://34.76.78.240:80",
+          "url": "http://10.0.12.38:80",
           "weight": 0
         }
       },
