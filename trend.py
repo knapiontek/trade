@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 
 
-def read_price_history() -> pd.DataFrame:
+def load_price_history() -> pd.DataFrame:
     df = pd.read_csv('ogzd.uk.csv')
 
     # df = df.loc[1420:1525, ['CLOSE']]
@@ -10,55 +10,83 @@ def read_price_history() -> pd.DataFrame:
     df = df.loc[:, ['CLOSE']]
 
     df.reset_index(level=0, inplace=True)
-    df.columns = ['ds', 'y']
-    return df
+    df.columns = ['days', 'price']
 
-
-def calculate_ema_signal(df: pd.DataFrame):
-    df['ema_fast'] = df.y.ewm(span=12 + 5, adjust=False).mean()
-    df['ema_slow'] = df.y.ewm(span=26 + 10, adjust=False).mean()
+    df['ema_fast'] = df.price.ewm(span=12 + 5, adjust=False).mean()
+    df['ema_slow'] = df.price.ewm(span=26 + 10, adjust=False).mean()
     df['ema_diff'] = df.ema_fast - df.ema_slow
     df['ema_signal'] = df.ema_diff.ewm(span=9, adjust=False).mean()
 
+    return df
+
+
+SIGNAL_NIL = 0
+SIGNAL_BUY = 1
+SIGNAL_SELL = 2
+
+
+def detect_signal(i: int, df: pd.DataFrame) -> int:
+    if i == 0:
+        return SIGNAL_NIL
+    prev = df.ema_signal.iloc[i - 1]
+    curr = df.ema_signal.iloc[i]
+    if curr > 0 and prev < 0:
+        return SIGNAL_BUY
+    elif curr < 0 and prev > 0:
+        return SIGNAL_SELL
+    else:
+        return SIGNAL_NIL
+
+
+class Account:
+    stock: int  # + long, - short
+    price: float
+    deposit: float
+    fee = 0.02
+
+    def __init__(self):
+        self.stock = 0
+        self.price = 0
+        self.deposit = 0
+
+    def open_position(self, stock: int, price: float):
+        self.stock += stock
+        self.price = price
+
+    def close_position(self, price: float):
+        self.deposit += self.stock * (price - self.price)
+        self.deposit -= abs(self.stock) * self.fee
+        self.stock = 0
+        self.price = 0
+
 
 def trade(df: pd.DataFrame):
-    fee = 0.02
-    profit = 0.0
-    count = 0
-    last_signal = None
-    init_price = None
-    last_price = None  # last exchange price
     df['profit'] = 0.0
-    for i, signal in enumerate(df.ema_signal):
-        price = df.y[i]
-        if signal != 0:
-            if signal > 0 and last_signal < 0:  # buy signal
-                count = count + 1
-                if last_price:
-                    profit += last_price - price - fee
-                else:
-                    init_price = price
-                last_price = price
-            elif signal < 0 and last_signal > 0:  # sell signal
-                count = count + 1
-                if last_price:
-                    profit += price - last_price - fee
-                else:
-                    init_price = price
-                last_price = price
-        last_signal = signal
-        df.loc[i, 'profit'] = profit
+    account = Account()
+    for i in df.index:
+        price = df.price.iloc[i]
+        signal_type = detect_signal(i, df)
+        if signal_type == SIGNAL_BUY:
+            assert account.stock <= 0
+            account.close_position(price)
+            account.open_position(1, price)
+        elif signal_type == SIGNAL_SELL:
+            assert account.stock >= 0
+            account.close_position(price)
+            account.open_position(-1, price)
+        if i == df.index[-1]:
+            account.close_position(df.price.iloc[-1])
+        df.loc[i, 'deposit'] = account.deposit
 
-    print(f'pocket: init: {init_price} final: {profit}')
-    print(f'count: {count}')
+    print(f'deposit: {account.deposit}')
 
 
 def display(df: pd.DataFrame):
-    plt.plot(df.ds, df.profit, label='Profit', color='BLUE')
-    plt.plot(df.ds, df.y, label='GAZ', color='PINK')
-    plt.plot(df.ds, df.ema_fast, label='EXP12', color='GREEN')
-    plt.plot(df.ds, df.ema_slow, label='EXP26', color='RED')
-    plt.plot(df.ds, df.ema_signal, label='EXP9', color='BLACK')
+    plt.plot(df.days, df.price, label='OGZD', color='GREY')
+    plt.plot(df.days, df.ema_fast, label='EMA FAST', color='GREEN')
+    plt.plot(df.days, df.ema_slow, label='EMA SLOW', color='RED')
+    plt.plot(df.days, df.ema_signal, label='EMA SIGNAL', color='BLACK')
+    plt.plot(df.days, df.deposit, label='PROFIT', color='BLUE')
     plt.legend(loc='upper left')
     plt.grid()
     plt.tight_layout()
@@ -66,8 +94,7 @@ def display(df: pd.DataFrame):
 
 
 def main():
-    df = read_price_history()
-    calculate_ema_signal(df)
+    df = load_price_history()
     trade(df)
     display(df)
 
