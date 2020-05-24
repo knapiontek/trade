@@ -54,10 +54,17 @@ class Account:
         self.price = price
 
     def close_position(self, price: float):
-        self.deposit += self.stock * (price - self.price)
-        self.deposit -= abs(self.stock) * self.fee
-        self.stock = 0
-        self.price = 0
+        if self.stock:
+            self.deposit += self.stock * (price - self.price)
+            self.deposit -= abs(self.stock) * self.fee
+            self.stock = 0
+            self.price = 0
+
+    def stop_loss(self, price: float):
+        loss = self.stock * (self.price - price)
+        loss_ratio = loss / self.price
+        if loss_ratio > 0.03:
+            self.close_position(price)
 
 
 def trade(df: pd.DataFrame):
@@ -74,6 +81,8 @@ def trade(df: pd.DataFrame):
             assert account.stock >= 0
             account.close_position(price)
             account.open_position(-1, price)
+        else:
+            account.stop_loss(price)
         if i == df.index[-1]:
             account.close_position(df.price.iloc[-1])
         df.loc[i, 'deposit'] = account.deposit
